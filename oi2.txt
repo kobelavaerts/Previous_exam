@@ -1,0 +1,27 @@
+# exercise 2
+
+# UNF
+DB: staffno dentistname patientno patientname appointment date time surgeryno
+
+# 1nf
+everything based on prmary key
+
+DB: *staffno*, *apptdate*, *appttime*, dentistname, patientno, surgeryno
+
+ # 2nf
+Everything on whole primary key
+
+Dentist: *staffno*, dnename
+patient: *patino*, patname, surgno
+appointment: *staffno*, *aptime*, *apdate*, patno
+
+# 3nf
+no transitive dependencies (dependent on something else than prim key
+same as 2
+
+
+#BCFN
+
+appoint: *appdate*, *aptime*, *stafno*,	patiento
+dentist: *staffno*, dename
+patient: *patno*, patname, surgno
