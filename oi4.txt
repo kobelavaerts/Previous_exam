@@ -1,0 +1,122 @@
+# exerc 4
+# query one
+select guestname, guestaddress from guest where guestaddress like "%London" order by guestname;
++--------------+--------------------+
+| guestname    | guestaddress       |
++--------------+--------------------+
+| John Kay     | 56 High St, London |
+| Mike Ritchie | 18 Tain St, London |
++--------------+--------------------+
+
+# qurey 2
+
+select * from room where (type="double" or type="family") and price < 40 order by price asc;
++--------+---------+--------+-------+
+| roomno | hotelno | type   | price |
++--------+---------+--------+-------+
+|    801 | ch02    | double | 15.00 |
+|    601 | fb01    | double | 29.00 |
+|   1001 | dc01    | double | 30.00 |
+|   1101 | dc01    | family | 35.00 |
+|    701 | fb01    | family | 39.00 |
++--------+---------+--------+-------+
+
+# query 3
+select * from booking where dateto is not null;
+| hotelno | guestno | datefrom   | dateto     | roomno |
++---------+---------+------------+------------+--------+
+| ch02    |   10002 | 2020-04-25 | 2020-05-06 |    801 |
+| dc01    |   10007 | 2020-05-13 | 2020-05-15 |   1001 |
+| fb01    |   10001 | 2020-04-01 | 2020-04-08 |    501 |
+| fb01    |   10002 | 2020-01-04 | 2020-01-29 |    601 |
+| fb01    |   10004 | 2020-04-15 | 2020-05-15 |    601 |
+| fb01    |   10005 | 2020-05-02 | 2020-05-07 |    501 |
+| fb02    |   10003 | 2020-04-05 | 2022-04-04 |   1001 |
+| fb02    |   10005 | 2020-05-12 | 2030-05-04 |   1101 |
+
+# query 4
+select avg(price) from room;
++------------+
+| avg(price) |
++------------+
+|  35.748333 |
++------------+
+
+#query 5
+select sum(price) from room where type = "double";
++------------+
+| sum(price) |
++------------+
+|  160.00    |
+ 
+# query 6
+select * from booking where "2020-8-1" between datefrom and dateto;
++---------+---------+------------+------------+--------+
+| hotelno | guestno | datefrom   | dateto     | roomno |
++---------+---------+------------+------------+--------+
+| fb02    |   10003 | 2020-04-05 | 2022-04-04 |   1001 |
+| fb02    |   10005 | 2020-05-12 | 2030-05-04 |   1101 |
++---------+---------+------------+------------+--------+
+
+# query 7
+select room.price, room.type from hotel join room on hotel.hotelno = room.hotelno where hotelname = "The Tower Hotel";
+
+-------+--------+
+| price | type   |
++-------+--------+
+| 19.00 | single |
+| 29.00 | double |
+| 39.00 | family |
++-------+--------+
+
+
+# query 8
+select guestname from guest join booking on guest.guestno = booking.guestno join hotel on hotel.hotelno = booking.hotelno where hotelname =
+"The Tower Hotel" and current_date() between datefrom and dateto;
++--------------+
+| guestname    |
++--------------+
+| Mike Ritchie |
++--------------+
+
+# query 9
+
+I don't know this one
+select * from hotel join booking on hotel.hotelno = booking.hotelno join guest on booking.guestno = guest.guestno right join room on room.roomno = booking.roomno and room.hotelno = booking.hotelno where hotelname = "The Tower Hotel";  -> hard one with right join and join on 2 tables at the same time -> not completely correct though
+this is what the dude said but I think it's wrong
+
+# 10
+elect sum(price) from booking join room on booking.roomno = room.roomno join hotel on booking.hotelno = hotel.hotelno join guest on booking
+.guestno = guest.guestno where current_date() between datefrom and dateto and hotelname = "The Tower Hotel";
+
+
+
+ sum(price) |
++------------+
+|      29.00 |
+
+
+# 11 list rooms that are currently unoccupied at the tower hotel
+
+select * from room join hotel on room.hotelno = hotel.hotelno where roomno not in (select booking.roomno from guest join booking on guest.guestno = booking.guestno join hotel on hotel.hotelno = booking.hotelno where hotelname = "The Tower Hotel" and current_date() between datefrom and dateto) and hotelname = "The Tower Hotel";
+
++--------+---------+--------+-------+---------+-----------------+--------+
+| roomno | hotelno | type   | price | hotelno | hotelname       | city   |
++--------+---------+--------+-------+---------+-----------------+--------+
+|    501 | fb01    | single | 19.00 | fb01    | The Tower Hotel | London |
+|    701 | fb01    | family | 39.00 | fb01    | The Tower Hotel | London |
++--------+---------+--------+-------+---------+-----------------+--------+
+
+
+# 12 lost income from unoccupied rooms
+
+select hotelname, type, count(type) from hotel join room on hotel.hotelno = room.hotelno join booking on booking.hotelno = room.hotelno and booking.roomno = room.roomno where city="London" group by hotelname, type order by count(type) desc;
+
+ # 13  number of rooms in each hotel in london
+select hotelname, count(*) as nrofrooms from hotel join room on hotel.hotelno = room.hotelno where city = "London" group by hotelname;
+
+
+# 14 most booked room type for each hotel in london
+
+select hotelname, type, count(type) from hotel join room on hotel.hotelno = room.hotelno join booking on booking.hotelno = room.hotelno and booking.roomno = room.roomno where city="London" group by hotelname, type order by count(type) desc;
+
