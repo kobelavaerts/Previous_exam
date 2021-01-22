@@ -1,0 +1,49 @@
+# mongodb queries
+
+# 1 
+
+db.restaurants.find({}, {restaurant_id:1, name:1, borough:1, cuisine:1, _id:0}).pretty()
+
+# 2
+db.restaurants.find({borough:"Bronx"}).skip(5).limit(5)
+
+#3 score greater than 90
+db.restaurants.find({"grades.score":{$gt:90}})
+
+# alternative with same result:
+db.restaurants.find({grades:{$elemMatch:{score:{$gt:90}}}})
+
+
+#4  not prep american 
+db.restaurants.find({cuisine:{$ne:"American"}, "grades.score":{$gt:70}, "address.coord.0":{$lt:-65.754268}})
+
+# 5 borough bronx and americ or chin
+# 2 possiilities
+
+db.restaurants.find({borough:"Bronx", $or:[{cuisine:"American"}, {cuisine: "Chinese"}]})
+
+db.restaurants.find({borough:"Bronx", cuisine:{$in:["American", "Chinese"]}})
+
+# 6
+
+db.restaurants.find({borough:{$nin:["Staten Island", "Queens", "Bronx", "Brooklyn"]}},{restaurant_id:1, name:1, borough:1, cuisine:1})
+
+# 7
+
+
+db.restaurants.find({"grades.score":{$not:{$gt:10}}},{restaurant_id:1, name:1, borough:1, cuisine:1, grades:1})
+
+# or
+db.restaurants.find({"grades.score":{$lte:10}},{_id:0,restaurant_id:1, name:1, "grades.$":1 })
+
+# 8
+
+db.restaurants.find({grades:{$elemMatch:{grade:"A", score:11, date:ISOdate("2014-08-11T00:00:00Z")}}},{_id:0,restaurant_id:1, name:1, grades:1 })
+
+
+# 9
+db.restaurants.find().sort({cuisine:1, borough:-1})
+
+#10
+db.restaurants.find({"address.street":{$exists:0}})
+
